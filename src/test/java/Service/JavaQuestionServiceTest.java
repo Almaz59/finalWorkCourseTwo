@@ -14,8 +14,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class JavaQuestionServiceTest {
@@ -49,31 +48,25 @@ class JavaQuestionServiceTest {
 
     @Test
     void test_getAll() {
-        Set<Question> questions = Set.of(
+        Set<Question> questionSet = Set.of(
                 new Question("testQ", "testA"),
-                new Question("testQ1", "testA1")
-        );
-        when(repository.getAll()).thenReturn(questions);
-
-        assertEquals(out.getAll().size(), questions.size());
-        assertTrue(out.getAll().containsAll(questions));
+                new Question("testQ1", "testA1"));
+        when(repository.getAll()).thenReturn(questionSet);
+        assertTrue(out.getAll().containsAll(questionSet));
     }
 
     @Test
     void test_getRandomQuestion() {
-        when(repository.getAll()).thenReturn(List.of(
+        Set<Question> questionSet = Set.of(
                 new Question("testQ", "testA"),
-                new Question("testQ1", "testA1"),
-                new Question("testQ2", "testA2")
-        ));
-
-        Random randomMock = mock(Random.class);
-        when(randomMock.nextInt(anyInt())).thenReturn(0, 2);
-        out.setRandom(randomMock);
+                new Question("testQ1", "testA1"));
+        when(repository.getAll()).thenReturn(questionSet);
+        Random random = mock(Random.class, withSettings().withoutAnnotations());
+        when(random.nextInt(anyInt())).thenReturn(0, 1);
+        out.setRandom(random);
 
         assertEquals(new Question("testQ", "testA"), out.getRandomQuestion());
-        assertEquals(new Question("testQ2", "testA2"), out.getRandomQuestion());
-
+        assertEquals(new Question("testQ1", "testA1"), out.getRandomQuestion());
     }
 
 }
